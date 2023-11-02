@@ -1,0 +1,16 @@
+ssh username@public_ip
+
+
+sudo apt-get update
+
+python3 --version
+
+sudo apt-get install python3-venv
+
+python3 -m venv pikachu
+
+source pikachu/bin/activate
+
+mkdir myapi && cd myapi
+
+wget -o api.py "
