@@ -13,4 +13,17 @@ source pikachu/bin/activate
 
 mkdir myapi && cd myapi
 
-wget -o api.py "
+wget "https://raw.githubusercontent.com/a-forty-two/dp2033rdnovend/main/api.py"
+
+pip3 install flask 
+
+python3 api.py
+
+
+
+-----------
+Please navigate to Networking tab on left menu of your VM, and add a new INBOUND PORT with destination as port 5000. 
+
+Then in a browser tab, navigate to the public IP address of the virtual machine and add the port 5000- for example, if the IP was 10.20.30.40, then type 10.20.30.40:5000 
+
+And voila! web page should be visible 
