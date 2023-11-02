@@ -1,0 +1,229 @@
+What is small and big data?
+- The data that cannot fit in 1 machine is big data!
+
+1 machine = 2 numbers 
+
+1,2,3 = big data 
+
+OLTP-> 
+M1 -   1,2						——replication—   M3- 		1,2
+M2-		3																M4-		3
+
+Cost of IT cannot exponentially increase along with data!
+
+Sharding -> breaking data into smaller chunks, such that unless you put all the chunks together, you cannot get the original data back!
+
+M1-> 1,2				M2-> 2,3				M3-> 3,1 
+
+Reduce h/w cost, and still store same data with FAULT TOLERANCE
+
+
+FAULT TOLERANCE-> we make multiple local copies of system (data or app) -> happens INSIDE a data center
+			-> Fault domain-> no 2 machines are going to share the same power socket!!!
+			-> update domains-> not all machines are going to update/restart at the same time!!!
+
+HIGH AVAILABILITY-> replicas are made outside the datacenter so that in case of unavailability, the requests could be redirected to the other infra OR different geos could be served by different closest datacenter. 
+
+
+Software v/s Data Engineers
+
+S/w-> apps= mobile, web, games, IoT 
+			-> look at where there users are?
+					-> global e-commerce website-> FT + HA 
+					-> local superstore in a city-> FT
+					-> hospital emergency service-> FT + HA
+					-> an admin who logs in once in year for auditing-> FT
+
+Data Engineers-> 
+		-> data = FT+ highly available 
+							= Blobs, ADLS, Synapse, Tables, HBase, SQL DW
+		-> analytics and transformations= Fault tolerant
+							= Databricks/Spark, Notebooks, Power BI
+
+Historically-> we always built architectures separately for BATCH and STREAM (LAMBDA)
+		-> Spark
+
+Modern-> unify our pipelines with SINGLE code (Kappa)
+		-> Databricks 
+
+Lambda v/s Kappa architectures!
+
+Delta Lake/Lakehouse 
+
+Data at rest-> ADLS/Blobs, Synapse, Azure Tables, Databases, NFS or file systems 
+
+Data in motion-> IoT Hub, Events Hub
+
+In order to process EITHER of them-> ADF, Databricks, Synapse, Notebooks, VM with custom code!
+
+
+Cloud Native (Azure) -> data factory, Databricks, HDInsight, Synapse, ML pipelines, MLFlow (cloud-> Databricks), Kubeflow (AKS)..
+
+Hybrid or Multi-cloud environment->  Apache Airflow, Apache Beam, Kubeflow, MLFlow 
+
+
+Data Lake is distributed, sharded and a DUMPING YARD!
+
+	cloud native-> ADLS Gen 2 (Hadoop compliant) 
+							-> replace hdfs:// with wasbs:// or adls://
+
+	big data native-> Hadoop on cloud-> HDInsight with Hadoop
+
+Why Hadoop?
+-> Hierarchal namespaces are still just LOGICAL folders!
+		-> real folders have a BIG speed and security advantage!
+		-> for real folders fall back to HDInsight with Hadoop 
+
+-> real-time process-> HDInsight with Hadoop will offer you the lowest possible latency! 
+
+-> in-built caching or temporary file system-> HDInsight with Hadoop!
+							
+Data Lake ecosystem:
+
+Hadoop -> distributed FS + OS -> PB scale + data and analysis. This is DISK based analysis-> meaning its cheap, but not the most efficient way!
+
+Spark -> in memory analytics -> IN_MEMORY, IN_MEMORY_DISK, IN_DISK (GB+ scale)
+
+Data should reside in Hadoop and processed in spark
+Hadoop-> FT+ HA
+Spark-> FT-> create clusters, use them, and deallocate them 
+
+But if the data isn’t here, we bring it in here!
+
+batch:
+	- SQL -> Apache Hive (databricks’ Hive metastore)-> 100-300ms latency 
+	- NoSQL-> Apache HBase-> 10ms latency 
+
+Stream:
+	- Inbound (being processed)-> Storm or Kafka
+	- outbound (being created)-> Kafka 
+
+Hadoop —— ADLS Gen2 or Synapse
+
+Spark	——— Databricks (codeful) or ADF (codeless) or native spark (HDInsight) or Synapse
+
+Hive ———— Databricks Hive Metastore or Synapse
+
+HBase ———	Azure Tables or Cosmos DB or HDInsight or Synapse Link for Cosmos
+
+Kafka ——— IoT Hub/Event Hub (no code and server less) or run Kafka on Databricks (codeful and completely user-managed) or Synapse’s Spark engine to run Kafka 
+
+Synapse or individual components?
+-> all the components -> we use Synapse
+			-> data ingestions, storage, processing (job or pipelines or processes), analytics, ml, dumping, logging and monitoring, security
+
+-> else build your own plug-and-play using other components!
+
+iot vs events hub
+
+iot - bidirectional system 
+
+Events hub- unidirectional 
+
+
+Credentials -> Access Key (Full permission)- avoided, shared access signature (SAS)-> anonymous URL that can be bound by a stard/end dates or IP addresses- comes with limited permission (Web/Mobile apps)
+
+Storage -> data lake-> Shared Access Signature
+						databricks-> Not possible 
+
+RBAC-> single user/multi user, which permissions, who can do what on clusters, who can access HIVE 
+
+KeyVault -> stored secrets (connection strings, passwords, certificates) 
+
+OPENROWSET 
+BULK file/*.csv
+
+
+Delta Lake:
+
+ARCHITECTURE- not a datastore
+
+FILE FORMAT in DATABRICKS!
+
+Customer DB
+DA-> most valued customers -> SQL aggregations, matplotlib
+DE-> running pipelines that clean dirty data-> SQL + pandas
+DS-> recommendation engine based on customer choices-> TF
+
+Expensive and unmanaged approach-> 3 diff datasets to these users
+	-> not a scalable solution 
+
+Rescuer-> Delta lake format and architecture
+
+3 separate stores:
+1. Bronze Layer-> dirty data (as-is)
+2. Silver Layer-> clean data (no missing values, and common state for all use cases)
+3. Gold Layer-> Feature engineered datasets-> mission specific according to each role
+
+In each layer, we don’t store data-> but ONLY the transformations that were required!!!!
+
+When data scientist requested for their dataset-> raw data form bronze passed to silver transformations and then only thru the GOLD LAYER for DATA SCIENTIST’s transformations!
+
+When data analyst requested for their dataset-> raw data form bronze passed to silver transformations and then only thru the GOLD LAYER for DATA ANALYST’s transformations!
+
+ONLY 1 copy of data exists-> rest are just transformations on top of it!!!
+
+
+Bronze-> C1-> 1,2,4,5,6,6,7,7,7,8,0,8,1 -> 1 TB
+							-> Data Lake 
+
+Silver-> distinct()-> transformation -> c1-> groupby.sum()
+
+Gold -> 2 separate-> even(), odd()
+
+DA-> even()-> raw data-> distinct()-> even()
+
+Transformations, Actions (graph execution)
+
+STREAMING 
+
+a= 1
+b= 2
+c= a+b				-> optimise -> d = 1+ 2 - 1, print(d)
+D = c-1
+print(d)
+
+Events Hub v/s IoT Hub 
+
+Events Hub-> same lines as Apache Kafka
+
+
+Logical Encapsulation -> app wise, topic wise, notification wise, project wise 
+
+Notification-> TOPIC 
+
+Publisher can write into a topic
+Subscription can subscribe to a topic 
+
+Events Hub Namespace 
+		-> event hubs -> topic 
+
+
+In our lab-> NODEJS (Publisher), Stream Analytics (Subscription)
+
+NodejS——>Kafka (Pub/Sub)
+
+
+DB Connection string:
+	protocol
+	hostname
+	username
+	credential (password or cert)
+
+Connection String from Events hub:
+Endpoint=sb://randompikachuservice.servicebus.windows.net/;SharedAccessKeyName=fromautomaticmachines;SharedAccessKey=JEk2YKiH3hVkGgz0NM5/QWm0uaCSuPCOh+AEhNkBQwE=;EntityPath=washingmachine	
+
+
+Our objective:
+
+Sensor (raspberry pi) <—> IoT Hub (topic) ——> Data Lake 
+																|					———> Stream Analytics
+											remote control
+
+
+
+
+
+
+
+
