@@ -35,7 +35,7 @@ Also note your username from hub.docker.com
 ------------
 
 
-cd myapi 
+cd myapi (not required if you are already in myapi folder)
 cat api.py
 echo flask>requirements.txt
 cat requirements.txt
