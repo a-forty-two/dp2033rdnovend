@@ -40,6 +40,8 @@ cat api.py
 echo flask>requirements.txt
 cat requirements.txt
 
+ sudo apt-get install docker.io 
+
 
 
 
