@@ -221,6 +221,49 @@ Sensor (raspberry pi) <—> IoT Hub (topic) ——> Data Lake
 											remote control
 
 
+Hbase/cassandra/hive: 
+(Columnar stores)
+
+Idx		name		hobby
+1			John			eating
+2			pikachu	eating
+3			John			sleeping
+4			John			reading
+5			John			eating
+6			pikachu	sleeping
+
+ALL THE DATA IS SORTED-> data that looks similar should be physically stored together 
+
+Base step before dictionary or run-length encoding:
+idx+name -> sort() ;		idx+hobby -> sort();
+
+DICTIONARY ENCODING (compute optimisation)
+Reverse mapping-> keys become values; and values become keys
+
+idx_name -> John: [1,3,4,5]; pikachu:[2,6]
+idx_hobby -> eating:[1,2,5]; sleeping:[3,6]; reading:[4]
+
+Query time-> exponentially faster!
+Editing -> will be disabled 
+
+
+RUN LENGTH ENCODING (storage optimisation)
+
+
+idx_name: John John John John pikachu pikachu
+idx_hobby: eating eating eating reading sleeping sleeping 
+
+run_length_encode()
+
+idx_name: John 3 pikachu 2
+Idx_hobby: eating 3 reading 1 sleeping 2
+
+
+Storage cost = GBs stored + GBs accessed
+
+Data factory-> ADLS gen2 -> GBs stored is out of our hand anyway!
+
+Access-> access everything v/s access only what you need
 
 
 
