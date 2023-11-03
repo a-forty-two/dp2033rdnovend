@@ -65,6 +65,16 @@ Then in a browser tab, navigate to the public IP address of the virtual machine 
 
 And voila! Your container is UP AND RUNNING as your web application!
 
+Now let's push our image to hub so that others can pull it
+--------------------------
+
+
+sudo docker push <user name>/<image name>:<tag name> 
+
+--------------------------
+
+verify that you are able to view the image on hub.docker.com 
+
 
 
 
