@@ -26,4 +26,25 @@ Please navigate to Networking tab on left menu of your VM, and add a new INBOUND
 
 Then in a browser tab, navigate to the public IP address of the virtual machine and add the port 5000- for example, if the IP was 10.20.30.40, then type 10.20.30.40:5000 
 
-And voila! web page should be visible 
+And voila! web page should be visible. Now navigate back to the VM.
+------------
+
+Press CTRL + C to stop your python server and navigate to the 'myapi' directory. 
+Also note your username from hub.docker.com 
+
+------------
+
+
+cd myapi 
+cat api.py
+echo flask>requirements.txt
+cat requirements.txt
+
+
+
+
+
+
+
+
+
